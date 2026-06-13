@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <!-- Three.js for animated 3D background -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.128.0/three.min.js"></script>
 
 <style>
 /* ============================================================
@@ -21,9 +21,9 @@
    ============================================================ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --ink:#050810;
-  --ink2:#080d1a;
-  --ink3:#0c1224;
+  --ink:#0a0a0b;
+  --ink2:#131314;
+  --ink3:#1c1c1e;
   --blue:#4f8ef7;
   --blue2:#6ba3f9;
   --blue3:#2563eb;
@@ -33,7 +33,7 @@
   --dim:#3d4f6b;
   --border:rgba(79,142,247,0.12);
   --border2:rgba(79,142,247,0.25);
-  --glass:rgba(8,13,26,0.72);
+  --glass:rgba(19,19,20,0.72);
   --r:2px;
   --font-display:'Bricolage Grotesque',sans-serif;
   --font-body:'Manrope',sans-serif;
@@ -136,7 +136,7 @@ nav{
 }
 nav.shrunk{padding:0.9rem 0}
 nav.shrunk .nav-inner{
-  background:rgba(5,8,16,0.88);
+  background:rgba(10,10,11,0.88);
   backdrop-filter:blur(24px);
   -webkit-backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
@@ -190,7 +190,7 @@ nav.shrunk .nav-inner{
 .ham.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);background:var(--blue)}
 .mob-menu{
   display:none;position:fixed;inset:0;top:60px;
-  background:rgba(5,8,16,0.97);backdrop-filter:blur(20px);
+  background:rgba(10,10,11,0.97);backdrop-filter:blur(20px);
   z-index:499;padding:2.5rem;flex-direction:column;
   border-top:1px solid var(--border);
 }
@@ -673,12 +673,15 @@ nav.shrunk .nav-inner{
   background:radial-gradient(circle,rgba(37,99,235,0.05),transparent 65%);
   pointer-events:none;
 }
-.contact-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:4rem;align-items:start;
+.contact-single{
+  max-width:760px;
 }
-.ct-text p{font-size:0.93rem;color:var(--sub);line-height:1.9;margin-bottom:1.2rem}
+.ct-text p{font-size:0.95rem;color:var(--sub);line-height:1.9;margin-bottom:1.2rem}
 .ct-opts{display:flex;flex-direction:column;gap:0.65rem;margin-top:2rem}
+.ct-opts-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0.75rem;margin-top:2rem;
+}
 .ct-opt{
   display:flex;align-items:center;gap:1rem;
   padding:1rem 1.25rem;
@@ -706,23 +709,6 @@ nav.shrunk .nav-inner{
   text-transform:uppercase;margin-bottom:2px;
 }
 .ct-v{font-size:12px;color:var(--text)}
-/* Email CTA */
-.email-cta{
-  background:var(--glass);border:1px solid var(--border);
-  backdrop-filter:blur(20px);padding:2.5rem;
-  display:flex;flex-direction:column;gap:1.25rem;
-  transition:border-color 0.3s,box-shadow 0.3s;
-}
-.email-cta:hover{border-color:var(--blue);box-shadow:0 0 40px rgba(37,99,235,0.1)}
-.email-cta-big{
-  font-family:var(--font-display);font-weight:700;
-  font-size:clamp(1.2rem,2.4vw,1.7rem);
-  letter-spacing:-0.01em;color:var(--text);
-  word-break:break-word;line-height:1.3;
-}
-.email-cta-sub{font-size:12px;color:var(--sub)}
-.email-cta-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem}
-.email-cta-btns .btn-ghost{cursor:pointer}
 
 /* ============================================================
    FOOTER
@@ -783,7 +769,7 @@ footer{
   .avail-pill{order:-1}
   .about-grid{grid-template-columns:1fr}
   .fp{grid-template-columns:1fr}
-  .contact-grid{grid-template-columns:1fr}
+  .ct-opts-grid{grid-template-columns:1fr}
   .tl-spine,.tl-node-col{display:none}
   .tl-row{grid-template-columns:auto 1fr;gap:0 1.25rem}
   .tl-left{text-align:left}
@@ -1204,29 +1190,15 @@ footer{
   <div class="sw">
     <p class="s-eye">Contact</p>
     <h2 class="s-title">Let's <em>work together</em></h2>
-    <div class="contact-grid">
-      <div>
-        <div class="ct-text">
-          <p>Open to full-time roles, internships, and freelance projects in AI/ML, backend engineering, and data. Typically respond within 24 hours.</p>
-        </div>
-        <div class="ct-opts">
-          <a href="https://linkedin.com/in/abdullah511" target="_blank" class="ct-opt"><div class="ct-ic">in</div><div><div class="ct-k">LinkedIn</div><div class="ct-v">linkedin.com/in/abdullah511</div></div></a>
-          <a href="mailto:muhammadabdullah090809@gmail.com" class="ct-opt"><div class="ct-ic">@</div><div><div class="ct-k">Email</div><div class="ct-v">muhammadabdullah090809@gmail.com</div></div></a>
-          <a href="tel:+923215055023" class="ct-opt"><div class="ct-ic">✆</div><div><div class="ct-k">Phone</div><div class="ct-v">+92-321-5055023</div></div></a>
-          <a href="https://github.com/abdullah090809" target="_blank" class="ct-opt"><div class="ct-ic">gh</div><div><div class="ct-k">GitHub</div><div class="ct-v">github.com/abdullah090809</div></div></a>
-        </div>
+    <div class="contact-single">
+      <div class="ct-text">
+        <p>Open to full-time roles, internships, and freelance projects in AI/ML, backend engineering, and data. Typically respond within 24 hours.</p>
       </div>
-      <div>
-        <div class="email-cta">
-          <p class="hgc-label">Direct line</p>
-          <p class="email-cta-big">muhammadabdullah090809<wbr>@gmail.com</p>
-          <p class="email-cta-sub">Click below to open your mail app, or copy the address.</p>
-          <div class="email-cta-btns">
-            <a class="btn-fill" href="mailto:muhammadabdullah090809@gmail.com">Email me →</a>
-            <button class="btn-ghost" type="button" id="copyEmailBtn">Copy email</button>
-          </div>
-          <p class="f-note" id="copyNote"></p>
-        </div>
+      <div class="ct-opts ct-opts-grid">
+        <a href="mailto:muhammadabdullah090809@gmail.com" class="ct-opt"><div class="ct-ic">@</div><div><div class="ct-k">Email</div><div class="ct-v">muhammadabdullah090809@gmail.com</div></div></a>
+        <a href="https://linkedin.com/in/abdullah511" target="_blank" class="ct-opt"><div class="ct-ic">in</div><div><div class="ct-k">LinkedIn</div><div class="ct-v">linkedin.com/in/abdullah511</div></div></a>
+        <a href="tel:+923215055023" class="ct-opt"><div class="ct-ic">✆</div><div><div class="ct-k">Phone</div><div class="ct-v">+92-321-5055023</div></div></a>
+        <a href="https://github.com/abdullah090809" target="_blank" class="ct-opt"><div class="ct-ic">gh</div><div><div class="ct-k">GitHub</div><div class="ct-v">github.com/abdullah090809</div></div></a>
       </div>
     </div>
   </div>
@@ -1517,7 +1489,6 @@ reveal('.pc', { y: 24, stagger: 0.1, dur: 0.6 });
 reveal('.fp-m', { x: 20, y: 0, stagger: 0.06, dur: 0.5 });
 reveal('.edu-card', { y: 24, dur: 0.7 });
 reveal('.ct-opt', { x: -20, y: 0, stagger: 0.08, dur: 0.5 });
-reveal('.email-cta', { x: 24, y: 0, dur: 0.7 });
 
 /* ============================================================
    ANIMATED TIMELINE
