@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Muhammad Abdullah — AI & Software Engineer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
 <!-- GSAP + ScrollTrigger + Lenis -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<!-- Three.js for animated 3D background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/128/three.min.js"></script>
 
 <style>
 /* ============================================================
@@ -33,8 +35,8 @@
   --border2:rgba(79,142,247,0.25);
   --glass:rgba(8,13,26,0.72);
   --r:2px;
-  --font-display:'Syne',sans-serif;
-  --font-body:'Inter',sans-serif;
+  --font-display:'Bricolage Grotesque',sans-serif;
+  --font-body:'Manrope',sans-serif;
   --font-mono:'JetBrains Mono',monospace;
 }
 html{scroll-behavior:auto}
@@ -117,13 +119,12 @@ img{display:block;max-width:100%}
 }
 
 /* ============================================================
-   BACKGROUND GRID (neural lattice)
+   3D BACKGROUND (Three.js)
    ============================================================ */
-#bg-grid{
+#three-bg{
   position:fixed;inset:0;z-index:0;pointer-events:none;
-  overflow:hidden;
+  opacity:0.85;
 }
-.bg-grid-svg{width:100%;height:100%;opacity:0.4}
 
 /* ============================================================
    NAV
@@ -705,39 +706,23 @@ nav.shrunk .nav-inner{
   text-transform:uppercase;margin-bottom:2px;
 }
 .ct-v{font-size:12px;color:var(--text)}
-/* Form */
-.ct-form{
+/* Email CTA */
+.email-cta{
   background:var(--glass);border:1px solid var(--border);
-  backdrop-filter:blur(20px);padding:2.25rem;
+  backdrop-filter:blur(20px);padding:2.5rem;
+  display:flex;flex-direction:column;gap:1.25rem;
+  transition:border-color 0.3s,box-shadow 0.3s;
 }
-.fg{margin-bottom:1.25rem}
-.fg label{
-  display:block;font-family:var(--font-mono);font-size:9px;
-  letter-spacing:0.15em;color:var(--blue);
-  text-transform:uppercase;margin-bottom:0.5rem;
+.email-cta:hover{border-color:var(--blue);box-shadow:0 0 40px rgba(37,99,235,0.1)}
+.email-cta-big{
+  font-family:var(--font-display);font-weight:700;
+  font-size:clamp(1.2rem,2.4vw,1.7rem);
+  letter-spacing:-0.01em;color:var(--text);
+  word-break:break-word;line-height:1.3;
 }
-.fg input,.fg textarea{
-  width:100%;background:rgba(255,255,255,0.025);
-  border:1px solid var(--border);color:var(--text);
-  font-family:var(--font-body);font-size:13px;
-  padding:0.8rem 1rem;outline:none;
-  transition:border-color 0.3s;resize:none;
-}
-.fg input:focus,.fg textarea:focus{border-color:var(--blue)}
-.fg input::placeholder,.fg textarea::placeholder{color:var(--sub)}
-.f-submit{
-  font-family:var(--font-mono);font-size:11px;
-  letter-spacing:0.12em;color:#fff;
-  background:var(--blue3);border:none;
-  padding:0.9rem;width:100%;cursor:none;
-  transition:all 0.3s;
-}
-.f-submit:hover{background:var(--blue);box-shadow:0 0 32px rgba(37,99,235,0.4)}
-.f-note{
-  font-family:var(--font-mono);font-size:10px;
-  color:var(--sub);margin-top:0.9rem;text-align:center;
-  min-height:1.2rem;
-}
+.email-cta-sub{font-size:12px;color:var(--sub)}
+.email-cta-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem}
+.email-cta-btns .btn-ghost{cursor:pointer}
 
 /* ============================================================
    FOOTER
@@ -771,6 +756,23 @@ footer{
   background:linear-gradient(90deg,transparent,var(--blue3),var(--cyan),var(--blue3),transparent);
   opacity:0.25;border:none;
 }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.global-toast{
+  position:fixed;bottom:1.75rem;left:50%;
+  transform:translate(-50%,20px);
+  background:var(--ink2);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--font-mono);
+  font-size:11px;letter-spacing:0.06em;
+  padding:0.85rem 1.5rem;
+  z-index:9990;opacity:0;
+  transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.global-toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ============================================================
    RESPONSIVE
@@ -833,21 +835,8 @@ footer{
 <!-- SPOTLIGHT -->
 <div id="spotlight"></div>
 
-<!-- BACKGROUND GRID -->
-<div id="bg-grid">
-  <svg class="bg-grid-svg" id="gridSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <pattern id="smallGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(79,142,247,0.07)" stroke-width="0.5"/>
-      </pattern>
-      <pattern id="bigGrid" width="200" height="200" patternUnits="userSpaceOnUse">
-        <rect width="200" height="200" fill="url(#smallGrid)"/>
-        <path d="M 200 0 L 0 0 0 200" fill="none" stroke="rgba(79,142,247,0.12)" stroke-width="0.5"/>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#bigGrid)"/>
-  </svg>
-</div>
+<!-- 3D ANIMATED BACKGROUND -->
+<div id="three-bg"></div>
 
 <!-- NAV -->
 <nav id="mainNav">
@@ -1228,14 +1217,16 @@ footer{
         </div>
       </div>
       <div>
-        <form class="ct-form" onsubmit="handleForm(event)">
-          <div class="fg"><label>Name</label><input type="text" placeholder="Your name" required></div>
-          <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com" required></div>
-          <div class="fg"><label>Subject</label><input type="text" placeholder="What's this about?"></div>
-          <div class="fg"><label>Message</label><textarea rows="5" placeholder="Your message..." required></textarea></div>
-          <button type="submit" class="f-submit" id="fBtn">Send message →</button>
-          <p class="f-note" id="fNote"></p>
-        </form>
+        <div class="email-cta">
+          <p class="hgc-label">Direct line</p>
+          <p class="email-cta-big">muhammadabdullah090809<wbr>@gmail.com</p>
+          <p class="email-cta-sub">Click below to open your mail app, or copy the address.</p>
+          <div class="email-cta-btns">
+            <a class="btn-fill" href="mailto:muhammadabdullah090809@gmail.com">Email me →</a>
+            <button class="btn-ghost" type="button" id="copyEmailBtn">Copy email</button>
+          </div>
+          <p class="f-note" id="copyNote"></p>
+        </div>
       </div>
     </div>
   </div>
@@ -1258,6 +1249,113 @@ footer{
    GSAP REGISTER
    ============================================================ */
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+/* ============================================================
+   3D ANIMATED BACKGROUND (Three.js)
+   ============================================================ */
+(function initThreeBG() {
+  const container = document.getElementById('three-bg');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.z = 32;
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+
+  // Color palette
+  const blue = new THREE.Color(0x4f8ef7);
+  const cyan = new THREE.Color(0x22d3ee);
+  const blue3 = new THREE.Color(0x2563eb);
+
+  // --- Particle field ---
+  const PARTICLE_COUNT = reducedMotion ? 250 : 900;
+  const positions = new Float32Array(PARTICLE_COUNT * 3);
+  const colors = new Float32Array(PARTICLE_COUNT * 3);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 90;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 90;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 60 - 10;
+    const c = Math.random() > 0.5 ? blue : cyan;
+    colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const particleMat = new THREE.PointsMaterial({
+    size: 0.22, vertexColors: true, transparent: true,
+    opacity: 0.65, blending: THREE.AdditiveBlending, depthWrite: false,
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  // --- Floating wireframe geometric shapes ---
+  const shapeGroup = new THREE.Group();
+  const shapeDefs = [
+    { geo: () => new THREE.IcosahedronGeometry(4.5, 0), color: blue,  pos: [-16, 7, -10],  speed: 0.06 },
+    { geo: () => new THREE.OctahedronGeometry(3.2, 0),  color: cyan,  pos: [16, -6, -6],   speed: -0.08 },
+    { geo: () => new THREE.TetrahedronGeometry(3.6, 0), color: blue3, pos: [10, 9, -18],   speed: 0.05 },
+    { geo: () => new THREE.IcosahedronGeometry(2.6, 1), color: cyan,  pos: [-13, -10, -14],speed: -0.07 },
+    { geo: () => new THREE.TorusGeometry(3.4, 0.9, 8, 24), color: blue, pos: [4, -2, -24], speed: 0.04 },
+  ];
+  const shapeMeshes = [];
+  shapeDefs.forEach(def => {
+    const edges = new THREE.EdgesGeometry(def.geo());
+    const mat = new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: 0.35 });
+    const mesh = new THREE.LineSegments(edges, mat);
+    mesh.position.set(...def.pos);
+    mesh.userData.speed = def.speed;
+    mesh.userData.baseY = def.pos[1];
+    shapeGroup.add(mesh);
+    shapeMeshes.push(mesh);
+  });
+  scene.add(shapeGroup);
+
+  // --- Mouse parallax ---
+  let mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
+  window.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth) - 0.5;
+    mouseY = (e.clientY / window.innerHeight) - 0.5;
+  });
+
+  // --- Resize ---
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // --- Render loop ---
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    if (!reducedMotion) {
+      particles.rotation.y = t * 0.015;
+      particles.rotation.x = t * 0.008;
+
+      shapeMeshes.forEach(mesh => {
+        mesh.rotation.x += mesh.userData.speed * 0.01;
+        mesh.rotation.y += mesh.userData.speed * 0.015;
+        mesh.position.y = mesh.userData.baseY + Math.sin(t * 0.4 + mesh.position.x) * 1.2;
+      });
+
+      targetRotX += (mouseY * 0.25 - targetRotX) * 0.04;
+      targetRotY += (mouseX * 0.25 - targetRotY) * 0.04;
+      camera.rotation.x = -targetRotX * 0.3;
+      camera.rotation.y = -targetRotY * 0.3;
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
 
 /* ============================================================
    LENIS SMOOTH SCROLL
@@ -1419,7 +1517,7 @@ reveal('.pc', { y: 24, stagger: 0.1, dur: 0.6 });
 reveal('.fp-m', { x: 20, y: 0, stagger: 0.06, dur: 0.5 });
 reveal('.edu-card', { y: 24, dur: 0.7 });
 reveal('.ct-opt', { x: -20, y: 0, stagger: 0.08, dur: 0.5 });
-reveal('.ct-form', { x: 24, y: 0, dur: 0.7 });
+reveal('.email-cta', { x: 24, y: 0, dur: 0.7 });
 
 /* ============================================================
    ANIMATED TIMELINE
@@ -1535,28 +1633,50 @@ document.getElementById('ham').addEventListener('click', function() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMob(); });
 
 /* ============================================================
-   CONTACT FORM
+   COPY EMAIL / TOAST
    ============================================================ */
-function handleForm(e) {
-  e.preventDefault();
-  const btn = document.getElementById('fBtn');
-  const note = document.getElementById('fNote');
-  btn.textContent = 'Sending...';
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.textContent = 'Sent ✓';
-    btn.style.opacity = '1';
-    btn.style.background = '#16a34a';
-    note.textContent = "Thanks! I'll get back to you within 24 hours.";
-    note.style.color = '#22c55e';
-    e.target.reset();
-    setTimeout(() => {
-      btn.textContent = 'Send message →';
-      btn.style.background = '';
-      note.textContent = '';
-    }, 4500);
-  }, 1100);
+const EMAIL = 'muhammadabdullah090809@gmail.com';
+
+function showToast(msg, targetNote) {
+  if (targetNote) {
+    targetNote.textContent = msg;
+    targetNote.style.color = '#22c55e';
+    setTimeout(() => { targetNote.textContent = ''; }, 3000);
+    return;
+  }
+  let toast = document.getElementById('globalToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'globalToast';
+    toast.className = 'global-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
 }
+
+async function copyEmail(noteEl) {
+  try {
+    await navigator.clipboard.writeText(EMAIL);
+    showToast('Email copied: ' + EMAIL, noteEl);
+  } catch {
+    showToast('Email: ' + EMAIL, noteEl);
+  }
+}
+
+const copyBtn = document.getElementById('copyEmailBtn');
+if (copyBtn) {
+  copyBtn.addEventListener('click', () => copyEmail(document.getElementById('copyNote')));
+}
+
+// "Hire me" nav button: let mailto attempt, and also copy as a reliable fallback
+document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+  link.addEventListener('click', () => {
+    copyEmail(null);
+  });
+});
 </script>
 </body>
 </html>
