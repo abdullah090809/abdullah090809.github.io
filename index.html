@@ -886,10 +886,6 @@ footer{
           <div class="h-stat-num" data-target="6">0</div>
           <div class="h-stat-label">Projects</div>
         </div>
-        <div>
-          <div class="h-stat-num" data-target="4">0</div>
-          <div class="h-stat-label">Years exp.</div>
-        </div>
       </div>
     </div>
     <!-- Right -->
@@ -1242,6 +1238,7 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
   // Color palette
   const blue = new THREE.Color(0x4f8ef7);
+  const blue2 = new THREE.Color(0x6ba3f9);
   const cyan = new THREE.Color(0x22d3ee);
   const blue3 = new THREE.Color(0x2563eb);
 
@@ -1269,11 +1266,18 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
   // --- Floating wireframe geometric shapes ---
   const shapeGroup = new THREE.Group();
   const shapeDefs = [
-    { geo: () => new THREE.IcosahedronGeometry(4.5, 0), color: blue,  pos: [-16, 7, -10],  speed: 0.06 },
-    { geo: () => new THREE.OctahedronGeometry(3.2, 0),  color: cyan,  pos: [16, -6, -6],   speed: -0.08 },
-    { geo: () => new THREE.TetrahedronGeometry(3.6, 0), color: blue3, pos: [10, 9, -18],   speed: 0.05 },
-    { geo: () => new THREE.IcosahedronGeometry(2.6, 1), color: cyan,  pos: [-13, -10, -14],speed: -0.07 },
-    { geo: () => new THREE.TorusGeometry(3.4, 0.9, 8, 24), color: blue, pos: [4, -2, -24], speed: 0.04 },
+    { geo: () => new THREE.IcosahedronGeometry(4.5, 0),         color: blue,  pos: [-16, 7, -10],  rot: [0.05, 0.07, 0.03] },
+    { geo: () => new THREE.OctahedronGeometry(3.2, 0),          color: cyan,  pos: [16, -6, -6],   rot: [-0.06, -0.08, 0.02] },
+    { geo: () => new THREE.TetrahedronGeometry(3.6, 0),         color: blue3, pos: [10, 9, -18],   rot: [0.04, 0.05, -0.03] },
+    { geo: () => new THREE.IcosahedronGeometry(2.6, 1),         color: cyan,  pos: [-13, -10, -14],rot: [-0.05, -0.07, 0.04] },
+    { geo: () => new THREE.TorusGeometry(3.4, 0.9, 8, 24),      color: blue,  pos: [4, -2, -24],   rot: [0.03, 0.04, 0.02] },
+    { geo: () => new THREE.DodecahedronGeometry(2.4, 0),        color: cyan,  pos: [-22, -2, -20], rot: [0.06, -0.04, 0.03] },
+    { geo: () => new THREE.TorusKnotGeometry(2, 0.5, 64, 8),    color: blue2, pos: [20, 11, -22],  rot: [0.04, 0.06, -0.04] },
+    { geo: () => new THREE.OctahedronGeometry(1.8, 0),          color: blue,  pos: [-6, 13, -8],   rot: [-0.07, 0.05, 0.06] },
+    { geo: () => new THREE.IcosahedronGeometry(1.6, 0),         color: cyan,  pos: [8, -12, -4],   rot: [0.08, -0.05, -0.03] },
+    { geo: () => new THREE.SphereGeometry(2.8, 10, 8),          color: blue3, pos: [-24, 4, -28],  rot: [0.02, 0.03, 0.01] },
+    { geo: () => new THREE.BoxGeometry(2.8, 2.8, 2.8),          color: blue2, pos: [22, -10, -16], rot: [0.05, -0.06, 0.04] },
+    { geo: () => new THREE.ConeGeometry(2.2, 4, 6),             color: cyan,  pos: [2, 14, -20],   rot: [-0.04, 0.05, 0.03] },
   ];
   const shapeMeshes = [];
   shapeDefs.forEach(def => {
@@ -1281,12 +1285,13 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
     const mat = new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: 0.35 });
     const mesh = new THREE.LineSegments(edges, mat);
     mesh.position.set(...def.pos);
-    mesh.userData.speed = def.speed;
+    mesh.userData.rot = def.rot;
     mesh.userData.baseY = def.pos[1];
     shapeGroup.add(mesh);
     shapeMeshes.push(mesh);
   });
   scene.add(shapeGroup);
+
 
   // --- Mouse parallax ---
   let mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
@@ -1313,8 +1318,10 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
       particles.rotation.x = t * 0.008;
 
       shapeMeshes.forEach(mesh => {
-        mesh.rotation.x += mesh.userData.speed * 0.01;
-        mesh.rotation.y += mesh.userData.speed * 0.015;
+        const r = mesh.userData.rot;
+        mesh.rotation.x += r[0] * 0.01;
+        mesh.rotation.y += r[1] * 0.01;
+        mesh.rotation.z += r[2] * 0.01;
         mesh.position.y = mesh.userData.baseY + Math.sin(t * 0.4 + mesh.position.x) * 1.2;
       });
 
